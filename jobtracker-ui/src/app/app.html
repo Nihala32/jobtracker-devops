@@ -1,0 +1,45 @@
+<main class="container">
+  <h1>Job Application Tracker</h1>
+
+  @if (error()) {
+    <p class="error">{{ error() }}</p>
+  }
+
+  <form class="form" (ngSubmit)="add()">
+    <input name="company" [(ngModel)]="form.company" placeholder="Company" required />
+    <input name="role" [(ngModel)]="form.role" placeholder="Role" required />
+    <select name="status" [(ngModel)]="form.status">
+      @for (s of statuses; track s) {
+        <option [value]="s">{{ s }}</option>
+      }
+    </select>
+    <input name="notes" [(ngModel)]="form.notes" placeholder="Notes (optional)" />
+    <button type="submit">Add</button>
+  </form>
+
+  <table>
+    <thead>
+      <tr><th>Company</th><th>Role</th><th>Status</th><th>Applied</th><th>Notes</th><th></th></tr>
+    </thead>
+    <tbody>
+      @for (job of jobs(); track job.id) {
+        <tr>
+          <td>{{ job.company }}</td>
+          <td>{{ job.role }}</td>
+          <td>
+            <select [value]="job.status" (change)="changeStatus(job, $any($event.target).value)">
+              @for (s of statuses; track s) {
+                <option [value]="s" [selected]="s === job.status">{{ s }}</option>
+              }
+            </select>
+          </td>
+          <td>{{ job.dateApplied | date: 'mediumDate' }}</td>
+          <td>{{ job.notes }}</td>
+          <td><button class="delete" (click)="remove(job.id)">Delete</button></td>
+        </tr>
+      } @empty {
+        <tr><td colspan="6">No applications yet. Add your first one above.</td></tr>
+      }
+    </tbody>
+  </table>
+</main>

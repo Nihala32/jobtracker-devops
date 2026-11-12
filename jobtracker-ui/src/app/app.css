@@ -1,0 +1,9 @@
+.container { max-width: 900px; margin: 2rem auto; padding: 0 1rem; font-family: Arial, sans-serif; }
+h1 { margin-bottom: 1rem; }
+.form { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1.5rem; }
+.form input, .form select { padding: 0.5rem; flex: 1 1 150px; }
+button { padding: 0.5rem 1rem; cursor: pointer; }
+table { width: 100%; border-collapse: collapse; }
+th, td { text-align: left; padding: 0.6rem; border-bottom: 1px solid #ddd; }
+.error { color: #b00020; }
+.delete { color: #b00020; }
