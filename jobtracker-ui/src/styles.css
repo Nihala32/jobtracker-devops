@@ -1,1 +1,72 @@
-/* You can add global styles to this file, and also import other style files */
+body { margin: 0; background: #f4f6fb; color: #1f2937; font-family: 'Segoe UI', system-ui, -apple-system, Arial, sans-serif; }
+a { text-decoration: none; }
+
+.nav { background: linear-gradient(135deg, #4f46e5, #7c3aed); color: #fff; }
+.nav-inner { max-width: 1000px; margin: 0 auto; padding: 0.9rem 1rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.6rem; }
+.brand { font-size: 1.25rem; font-weight: 700; }
+.links { display: flex; gap: 0.4rem; }
+.links a { color: #e0e7ff; padding: 0.45rem 0.9rem; border-radius: 8px; font-weight: 600; }
+.links a:hover { background: rgba(255, 255, 255, 0.15); }
+.links a.active { background: #fff; color: #4f46e5; }
+
+.container { max-width: 1000px; margin: 1.5rem auto 3rem; padding: 0 1rem; }
+.page-title { margin: 0; font-size: 1.7rem; }
+.page-sub { margin: 0.2rem 0 1.2rem; color: #6b7280; }
+.muted { color: #6b7280; }
+.link { color: #4f46e5; font-weight: 600; }
+
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 0.8rem; margin-bottom: 1.2rem; }
+.stat { background: #fff; border-radius: 12px; padding: 1rem; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06); border-top: 4px solid #cbd5e1; display: flex; flex-direction: column; }
+.stat .num { font-size: 1.8rem; font-weight: 700; }
+.stat .label { color: #6b7280; font-size: 0.85rem; }
+.stat.total { border-top-color: #4f46e5; }
+.stat.applied { border-top-color: #3b82f6; }
+.stat.interview { border-top-color: #f59e0b; }
+.stat.offer { border-top-color: #10b981; }
+.stat.rejected { border-top-color: #ef4444; }
+
+.card { background: #fff; border-radius: 14px; padding: 1.2rem 1.4rem; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06); margin-bottom: 1.2rem; }
+.card h2 { margin: 0; font-size: 1.15rem; }
+.toolbar { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.8rem; margin-bottom: 0.8rem; }
+.recent-row { display: flex; justify-content: space-between; align-items: center; padding: 0.8rem 0; border-bottom: 1px solid #f1f5f9; }
+.recent-row:last-child { border-bottom: none; }
+
+.form { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; align-items: end; }
+label { display: flex; flex-direction: column; gap: 0.3rem; font-size: 0.85rem; color: #4b5563; font-weight: 600; }
+.wide { grid-column: span 2; }
+@media (max-width: 600px) { .wide { grid-column: span 1; } }
+.actions { display: flex; gap: 0.6rem; align-items: center; }
+input, select { padding: 0.6rem 0.7rem; border: 1px solid #d1d5db; border-radius: 8px; font-size: 0.95rem; background: #fff; font-family: inherit; }
+input:focus, select:focus { outline: 2px solid #c7d2fe; border-color: #6366f1; }
+.search { min-width: 240px; }
+
+button, .btn { font-family: inherit; cursor: pointer; border: none; border-radius: 8px; font-size: 0.9rem; padding: 0.65rem 1.1rem; display: inline-block; background: #e5e7eb; color: #374151; font-weight: 600; }
+.primary { background: #4f46e5; color: #fff; }
+.primary:hover { background: #4338ca; }
+.delete { background: #fff; color: #dc2626; border: 1px solid #fecaca; padding: 0.35rem 0.8rem; }
+.delete:hover { background: #fef2f2; }
+
+.table-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; }
+th { text-align: left; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.04em; color: #6b7280; padding: 0.7rem 0.6rem; border-bottom: 2px solid #e5e7eb; }
+td { padding: 0.8rem 0.6rem; border-bottom: 1px solid #f1f5f9; vertical-align: middle; }
+tr:hover td { background: #f9fafb; }
+.company { font-weight: 600; }
+.notes { color: #6b7280; max-width: 220px; }
+.empty { text-align: center; color: #9ca3af; padding: 1.5rem; }
+
+.status, .badge { border: none; border-radius: 999px; padding: 0.35rem 0.8rem; font-weight: 600; font-size: 0.82rem; }
+.status { cursor: pointer; }
+.applied { --bg: #dbeafe; --fg: #1d4ed8; }
+.interview { --bg: #fef3c7; --fg: #b45309; }
+.offer { --bg: #d1fae5; --fg: #047857; }
+.rejected { --bg: #fee2e2; --fg: #b91c1c; }
+.status.applied, .status.interview, .status.offer, .status.rejected,
+.badge.applied, .badge.interview, .badge.offer, .badge.rejected { background: var(--bg); color: var(--fg); }
+
+.toast-wrap { position: fixed; top: 1rem; right: 1rem; display: flex; flex-direction: column; gap: 0.6rem; z-index: 1000; }
+.toast { min-width: 240px; max-width: 340px; padding: 0.85rem 1.1rem; border-radius: 10px; color: #fff; font-weight: 600; box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2); cursor: pointer; animation: slide-in 0.25s ease-out; }
+.toast.success { background: #059669; }
+.toast.error { background: #dc2626; }
+.toast.info { background: #2563eb; }
+@keyframes slide-in { from { transform: translateX(30px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
