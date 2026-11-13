@@ -1,4 +1,5 @@
 # Job Application Tracker
+[![CI](https://github.com/Nihala32/jobtracker-devops/actions/workflows/ci.yml/badge.svg)](https://github.com/Nihala32/jobtracker-devops/actions/workflows/ci.yml)
 
 A full stack app for tracking job applications, fully containerized with Docker.
 
@@ -33,5 +34,5 @@ Then open:
 Browser → Angular (nginx) → .NET API → SQL Server
 
 ## Roadmap
-- [ ] GitHub Actions CI pipeline
+- [x] GitHub Actions CI pipeline
 - [ ] Deploy to Azure
