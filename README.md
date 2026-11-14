@@ -16,6 +16,7 @@ A full stack app for tracking job applications, fully containerized with Docker.
 - Dashboard with status summary cards
 - Add, search, filter, update status, and delete applications
 - Migrations applied automatically when the API starts
+- CI/CD with GitHub Actions: builds the API and UI, then publishes Docker images to GitHub Container Registry
 
 ## Run it locally
 You only need Docker Desktop installed.
@@ -30,9 +31,18 @@ Then open:
 - App: http://localhost:4200
 - API docs (Swagger): http://localhost:8080/swagger
 
+## Pre-built images
+Pull the published images without building anything:
+
+```bash
+docker pull ghcr.io/nihala32/jobtracker-api:latest
+docker pull ghcr.io/nihala32/jobtracker-ui:latest
+```
 ## Architecture
 Browser → Angular (nginx) → .NET API → SQL Server
 
 ## Roadmap
 - [x] GitHub Actions CI pipeline
-- [ ] Deploy to Azure
+- [x] Publish Docker images to GitHub Container Registry
+- [ ] Run on local Kubernetes
+- [ ] Infrastructure as code with Terraform
