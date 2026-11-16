@@ -4,7 +4,7 @@
 const LOCAL_API = 'http://localhost:8080/api';
 
 // The live API on Vercel (keep /api at the end).
-export const LIVE_API = 'https://ai-jobtracker-api.vercel.app/api';
+export const LIVE_API = 'https://jobtracker-api-theta.vercel.app/api';
 
 const isLocal = ['localhost', '127.0.0.1'].includes(location.hostname);
 

@@ -8,9 +8,13 @@ using Microsoft.EntityFrameworkCore;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
+// CORS: exact origins from Cors:Origins, plus wildcard patterns from Cors:OriginPatterns
+// (e.g. https://jobtracker*.vercel.app covers the live site and every Vercel preview deployment).
+var corsOrigins = builder.Configuration.GetSection("Cors:Origins").Get<string[]>() ?? new[] { "http://localhost:4200" };
+var corsPatterns = builder.Configuration.GetSection("Cors:OriginPatterns").Get<string[]>() ?? Array.Empty<string>();
 builder.Services.AddCors(options =>
     options.AddPolicy("ui", policy =>
-        policy.WithOrigins(builder.Configuration.GetSection("Cors:Origins").Get<string[]>() ?? new[] { "http://localhost:4200" })
+        policy.SetIsOriginAllowed(origin => CorsOriginMatcher.IsAllowed(origin, corsOrigins, corsPatterns))
               .AllowAnyHeader()
               .AllowAnyMethod()));
 
