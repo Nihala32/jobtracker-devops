@@ -21,14 +21,54 @@ services:
     environment:
       ASPNETCORE_ENVIRONMENT: Development
       ConnectionStrings__DefaultConnection: "Server=db,1433;Database=JobTrackerDb;User Id=sa;Password=YourStrong!Passw0rd;TrustServerCertificate=True;"
+      # AI settings come from the .env file (copy .env.example to .env).
+      # Default: the local Ollama container below, which is free and needs no API key.
+      Ai__Provider: ${AI_PROVIDER:-Ollama}
+      Ai__BaseUrl: ${AI_BASE_URL:-http://ollama:11434/v1}
+      Ai__Model: ${AI_MODEL:-llama3.2:3b}
+      Ai__ApiKey: ${AI_API_KEY:-}
     depends_on:
       db:
         condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "bash -c 'exec 3<>/dev/tcp/localhost/8080' || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+
   ui:
     build: ./jobtracker-ui
     ports:
       - "4200:80"
     depends_on:
       - api
+
+  # ---- Local AI (optional). Start with: docker compose --profile local-ai up -d ----
+  ollama:
+    image: ollama/ollama:latest
+    profiles: ["local-ai"]
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama:/root/.ollama
+    healthcheck:
+      test: ["CMD", "ollama", "list"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  # Downloads the model once (about 2 GB), then exits.
+  ollama-pull:
+    image: ollama/ollama:latest
+    profiles: ["local-ai"]
+    environment:
+      OLLAMA_HOST: ollama:11434
+    entrypoint: ["ollama", "pull", "${AI_MODEL:-llama3.2:3b}"]
+    depends_on:
+      ollama:
+        condition: service_healthy
+    restart: "no"
+
 volumes:
   sqldata:
+  ollama:

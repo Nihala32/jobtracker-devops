@@ -1,16 +1,70 @@
-<nav class="nav">
-  <div class="nav-inner">
-    <span class="brand">Job Tracker</span>
-    <div class="links">
-      <a routerLink="/dashboard" routerLinkActive="active">Dashboard</a>
-      <a routerLink="/applications" routerLinkActive="active">Applications</a>
-      <a routerLink="/add" routerLinkActive="active">Add Job</a>
+<div class="shell">
+  <aside class="sidebar" [class.open]="sidebarOpen()">
+    <a routerLink="/dashboard" class="brand">
+      <span class="brand-mark"><app-icon name="logo" [size]="19" [stroke]="2.2" /></span>
+      <span>AI Job Tracker<small>Your job search co-pilot</small></span>
+    </a>
+
+    <a class="nav-item" routerLink="/dashboard" routerLinkActive="active"><app-icon name="dashboard" /> Dashboard</a>
+    <a class="nav-item" routerLink="/applications" routerLinkActive="active">
+      <app-icon name="list" /> Applications <span class="count">{{ activeCount() }}</span>
+    </a>
+    <a class="nav-item" routerLink="/board" routerLinkActive="active">
+      <app-icon name="board" /> Board
+      @if (interviewCount()) { <span class="count">{{ interviewCount() }} interview{{ interviewCount() > 1 ? 's' : '' }}</span> }
+    </a>
+
+    <div class="nav-label">Create</div>
+    <a class="nav-item" routerLink="/add" routerLinkActive="active"><app-icon name="sparkles" /> Add with AI</a>
+
+    <div class="nav-label">You</div>
+    <a class="nav-item" routerLink="/profile" routerLinkActive="active"><app-icon name="file" /> Profile &amp; CV</a>
+
+    <div class="sidebar-foot">
+      <div class="ai-chip">
+        <span class="dot" [class.on]="ai.status()?.configured"></span>
+        <div>
+          <strong>{{ ai.status()?.provider ?? 'AI offline' }}</strong>
+          {{ ai.status()?.model ?? 'Start the API to use AI' }}
+        </div>
+      </div>
+      <button class="btn ghost" (click)="theme.toggle()" style="justify-content:flex-start">
+        <app-icon [name]="theme.theme() === 'dark' ? 'sun' : 'moon'" />
+        {{ theme.theme() === 'dark' ? 'Light mode' : 'Dark mode' }}
+      </button>
+      <a class="me" routerLink="/profile">
+        <app-avatar [name]="profiles.profile()?.fullName || 'You'" [size]="34" />
+        <div>
+          <div class="me-name">{{ profiles.profile()?.fullName || 'Set up your profile' }}</div>
+          <div class="me-sub">{{ profiles.profile()?.headline || 'Add your CV for AI features' }}</div>
+        </div>
+      </a>
     </div>
+  </aside>
+  <div class="scrim" [class.show]="sidebarOpen()" (click)="sidebarOpen.set(false)"></div>
+
+  <div class="main">
+    <header class="topbar">
+      <button class="btn icon ghost menu-btn" (click)="sidebarOpen.set(true)" aria-label="Open menu"><app-icon name="menu" /></button>
+      <button class="search-trigger" (click)="paletteOpen.set(true)">
+        <app-icon name="search" [size]="16" />
+        <span>Search jobs, pages, actions…</span>
+        <kbd class="hide-sm">{{ isMac ? '⌘' : 'Ctrl' }} K</kbd>
+      </button>
+      <span class="spacer"></span>
+      <button class="btn icon ghost hide-sm" (click)="theme.toggle()" [attr.aria-label]="'Switch theme'">
+        <app-icon [name]="theme.theme() === 'dark' ? 'sun' : 'moon'" />
+      </button>
+      <a routerLink="/add" class="btn primary"><app-icon name="plus" [size]="16" /> <span class="hide-sm">Add job</span></a>
+    </header>
+
+    <main class="content">
+      <router-outlet />
+    </main>
   </div>
-</nav>
+</div>
 
-<main class="container">
-  <router-outlet />
-</main>
-
+@if (paletteOpen()) {
+  <app-command-palette (closed)="paletteOpen.set(false)" />
+}
 <app-toasts />
