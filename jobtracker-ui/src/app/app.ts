@@ -9,6 +9,7 @@ import { JobService } from './job.service';
 import { AiService } from './ai.service';
 import { ProfileService } from './profile.service';
 import { ThemeService } from './theme.service';
+import { AppInfoService } from './app-info.service';
 
 @Component({
   selector: 'app-root',
@@ -21,6 +22,7 @@ export class App implements OnInit {
   ai = inject(AiService);
   profiles = inject(ProfileService);
   theme = inject(ThemeService);
+  appInfo = inject(AppInfoService);
   private router = inject(Router);
 
   sidebarOpen = signal(false);
@@ -39,6 +41,7 @@ export class App implements OnInit {
     this.jobs.load();
     this.ai.loadStatus();
     this.profiles.load();
+    this.appInfo.load();
   }
 
   @HostListener('document:keydown', ['$event'])

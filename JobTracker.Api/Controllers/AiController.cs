@@ -17,9 +17,11 @@ public class AiController : ControllerBase
     private readonly JobAiService _ai;
     private readonly AiOptions _options;
     private readonly ILogger<AiController> _logger;
+    private readonly DailyAiQuota _quota;
 
-    public AiController(AppDbContext db, JobAiService ai, IOptions<AiOptions> options, ILogger<AiController> logger)
+    public AiController(AppDbContext db, JobAiService ai, IOptions<AiOptions> options, ILogger<AiController> logger, DailyAiQuota quota)
     {
+        _quota = quota;
         _db = db;
         _ai = ai;
         _options = options.Value;
@@ -103,6 +105,10 @@ public class AiController : ControllerBase
     /// <summary>Turns AI and validation failures into clear HTTP errors the UI can show.</summary>
     private async Task<IActionResult> Run<T>(Func<Task<T>> action)
     {
+        if (!_quota.TryConsume())
+            return StatusCode(StatusCodes.Status429TooManyRequests,
+                new { error = "The demo has reached today's AI limit. Please try again tomorrow, or run it locally." });
+
         try
         {
             return Ok(await action());

@@ -58,6 +58,14 @@
       <a routerLink="/add" class="btn primary"><app-icon name="plus" [size]="16" /> <span class="hide-sm">Add job</span></a>
     </header>
 
+    @if (appInfo.info()?.demo) {
+      <div class="demo-bar">
+        <app-icon name="sparkles" [size]="15" />
+        <span><b>Live demo</b> with sample data. Try anything; it resets every {{ appInfo.info()?.resetHours }} hours.</span>
+        <a [href]="appInfo.info()?.repoUrl" target="_blank" rel="noopener">View the code on GitHub <app-icon name="external" [size]="12" /></a>
+      </div>
+    }
+
     <main class="content">
       <router-outlet />
     </main>

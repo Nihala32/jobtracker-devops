@@ -1,3 +1,4 @@
+using System.Threading.RateLimiting;
 using Microsoft.AspNetCore.RateLimiting;
 using JobTracker.Api.Data;
 using JobTracker.Api.Services;
@@ -21,16 +22,26 @@ builder.Services.Configure<AiOptions>(builder.Configuration.GetSection(AiOptions
 builder.Services.AddHttpClient<IAiClient, OpenAiCompatibleClient>();
 builder.Services.AddScoped<JobAiService>();
 
-// AI calls are slow and can cost money, so limit them to 10 per minute.
+// Public demo mode (sample data, scheduled reset, AI caps).
+builder.Services.Configure<DemoOptions>(builder.Configuration.GetSection(DemoOptions.Section));
+builder.Services.AddSingleton<DailyAiQuota>();
+builder.Services.AddHostedService<DemoResetService>();
+var demo = builder.Configuration.GetSection(DemoOptions.Section).Get<DemoOptions>() ?? new DemoOptions();
+
+// AI calls are slow and can cost money, so limit how often each visitor can call them.
 builder.Services.AddRateLimiter(options =>
 {
     options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
-    options.AddFixedWindowLimiter("ai", limiter =>
-    {
-        limiter.PermitLimit = 10;
-        limiter.Window = TimeSpan.FromMinutes(1);
-        limiter.QueueLimit = 0;
-    });
+    // Each visitor (IP address) gets its own allowance.
+    var perMinute = demo.Enabled ? demo.AiRequestsPerMinutePerVisitor : 10;
+    options.AddPolicy("ai", context => RateLimitPartition.GetFixedWindowLimiter(
+        context.Connection.RemoteIpAddress?.ToString() ?? "unknown",
+        _ => new FixedWindowRateLimiterOptions
+        {
+            PermitLimit = perMinute,
+            Window = TimeSpan.FromMinutes(1),
+            QueueLimit = 0
+        }));
 });
 
 builder.Services.AddHealthChecks().AddCheck<DatabaseHealthCheck>("database");

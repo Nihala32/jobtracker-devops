@@ -5,6 +5,7 @@ import { ProfileService } from '../profile.service';
 import { AiService } from '../ai.service';
 import { ToastService } from '../toast.service';
 import { ThemeService } from '../theme.service';
+import { AppInfoService } from '../app-info.service';
 import { Icon } from '../components/icon';
 import { Avatar } from '../components/avatar';
 import { API_BASE } from '../api.config';
@@ -20,6 +21,13 @@ import { UserProfile, errorMessage } from '../models';
         <p class="page-sub">The AI compares every job with this CV. It's stored only in your own database.</p>
       </div>
     </div>
+
+    @if (appInfo.isDemo()) {
+      <div class="notice">
+        <app-icon name="alert" [size]="20" />
+        <div>This is the <b>demo profile</b>, so it can't be edited here. Clone the project from GitHub to use your own CV.</div>
+      </div>
+    }
 
     <div class="detail-layout">
       <section class="card">
@@ -48,7 +56,7 @@ import { UserProfile, errorMessage } from '../models';
           </label>
 
           <div class="form-actions">
-            <button class="btn primary" type="submit" [disabled]="saving()">
+            <button class="btn primary" type="submit" [disabled]="saving() || appInfo.isDemo()">
               @if (saving()) { <span class="spinner"></span> Saving… } @else { Save profile }
             </button>
           </div>
@@ -94,6 +102,7 @@ export class Profile implements OnInit {
   private cdr = inject(ChangeDetectorRef);
   ai = inject(AiService);
   theme = inject(ThemeService);
+  appInfo = inject(AppInfoService);
 
   model: UserProfile = { fullName: '', headline: '', skills: '', cvText: '', weeklyGoal: 10 };
   saving = signal(false);

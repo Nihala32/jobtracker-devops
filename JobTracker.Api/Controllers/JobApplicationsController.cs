@@ -5,6 +5,7 @@ using JobTracker.Api.Models;
 using JobTracker.Api.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 
 namespace JobTracker.Api.Controllers;
 
@@ -13,8 +14,13 @@ namespace JobTracker.Api.Controllers;
 public class JobApplicationsController : ControllerBase
 {
     private readonly AppDbContext _db;
+    private readonly DemoOptions _demo;
 
-    public JobApplicationsController(AppDbContext db) => _db = db;
+    public JobApplicationsController(AppDbContext db, IOptions<DemoOptions> demo)
+    {
+        _db = db;
+        _demo = demo.Value;
+    }
 
     [HttpGet]
     public async Task<ActionResult<List<JobApplication>>> GetAll() =>
@@ -32,6 +38,9 @@ public class JobApplicationsController : ControllerBase
     {
         if (request.Status is not null && !JobStatuses.IsValid(request.Status))
             return BadRequest(new { error = $"Status must be one of: {string.Join(", ", JobStatuses.All)}" });
+
+        if (_demo.Enabled && await _db.JobApplications.CountAsync() >= _demo.MaxJobs)
+            return BadRequest(new { error = $"The demo is limited to {_demo.MaxJobs} applications. It resets every {_demo.ResetHours} hours." });
 
         var job = new JobApplication { DateApplied = request.DateApplied ?? DateTime.UtcNow };
         Apply(job, request);

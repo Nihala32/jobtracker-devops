@@ -145,6 +145,14 @@ kbd { font-family: inherit; font-size: 0.7rem; font-weight: 700; padding: 0.1rem
   .hide-sm { display: none !important; }
 }
 
+/* Demo banner */
+.demo-bar { display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; padding: 0.55rem 2rem; font-size: 0.84rem;
+  background: linear-gradient(90deg, var(--ai-soft), var(--accent-soft)); border-bottom: 1px solid var(--border); color: var(--text-2); }
+.demo-bar app-icon { color: var(--ai); }
+.demo-bar b { color: var(--text); }
+.demo-bar a { margin-left: auto; display: inline-flex; align-items: center; gap: 0.3rem; font-weight: 700; color: var(--accent-text); }
+@media (max-width: 960px) { .demo-bar { padding: 0.55rem 1rem; } .demo-bar a { margin-left: 0; } }
+
 /* ---------- Page header ---------- */
 .page-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 1rem; flex-wrap: wrap; margin-bottom: 1.5rem; }
 .page-title { font-size: 1.65rem; font-weight: 800; letter-spacing: -0.025em; }
