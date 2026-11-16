@@ -3,7 +3,7 @@ using Microsoft.Extensions.Options;
 
 namespace JobTracker.Api.Services;
 
-/// <summary>In demo mode, resets the sample data when the app starts and then every few hours.</summary>
+/// <summary>In demo mode, resets the sample data every few hours (and on first start with an empty database).</summary>
 public class DemoResetService(IServiceScopeFactory scopes, IOptions<DemoOptions> options, ILogger<DemoResetService> logger)
     : BackgroundService
 {
@@ -12,21 +12,22 @@ public class DemoResetService(IServiceScopeFactory scopes, IOptions<DemoOptions>
         var demo = options.Value;
         if (!demo.Enabled) return;
 
-        await ResetAsync(stoppingToken);
+        await ResetIfDueAsync(demo.ResetHours, stoppingToken);
 
-        using var timer = new PeriodicTimer(TimeSpan.FromHours(Math.Max(1, demo.ResetHours)));
+        // Check every 15 minutes; the reset itself only happens when it is due.
+        using var timer = new PeriodicTimer(TimeSpan.FromMinutes(15));
         while (await timer.WaitForNextTickAsync(stoppingToken))
-            await ResetAsync(stoppingToken);
+            await ResetIfDueAsync(demo.ResetHours, stoppingToken);
     }
 
-    private async Task ResetAsync(CancellationToken ct)
+    private async Task ResetIfDueAsync(int resetHours, CancellationToken ct)
     {
         try
         {
             using var scope = scopes.CreateScope();
             var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-            await DemoData.ResetAsync(db, DateTime.UtcNow, ct);
-            logger.LogInformation("Demo data reset");
+            if (await DemoData.ResetIfDueAsync(db, DateTime.UtcNow, resetHours, ct))
+                logger.LogInformation("Demo data reset");
         }
         catch (Exception ex) when (ex is not OperationCanceledException)
         {

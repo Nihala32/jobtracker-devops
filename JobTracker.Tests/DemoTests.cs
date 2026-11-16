@@ -38,4 +38,16 @@ public class DemoTests
         Assert.True(jobs.All(j => j.DateApplied <= now && j.DateApplied > now.AddDays(-60)));
         Assert.True(jobs.All(j => !string.IsNullOrWhiteSpace(j.Company) && !string.IsNullOrWhiteSpace(j.Role)));
     }
+
+    [Theory]
+    [InlineData(1, false)]
+    [InlineData(5, false)]
+    [InlineData(6, true)]
+    [InlineData(30, true)]
+    public void Reset_is_due_only_after_the_reset_interval(int hoursSinceReset, bool expected)
+    {
+        var now = new DateTime(2026, 11, 16, 12, 0, 0, DateTimeKind.Utc);
+
+        Assert.Equal(expected, DemoData.IsResetDue(now.AddHours(-hoursSinceReset), now, resetHours: 6));
+    }
 }

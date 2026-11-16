@@ -43,6 +43,23 @@ public static class DemoData
         Location: Dubai (hybrid). Salary: AED 16,000 – 22,000 per month.
         """;
 
+    /// <summary>
+    /// Resets only if the data is missing or older than <paramref name="resetHours"/>.
+    /// Safe to call from many app instances at once (serverless hosting starts several):
+    /// the demo profile's UpdatedAt records when the last reset happened.
+    /// </summary>
+    public static async Task<bool> ResetIfDueAsync(AppDbContext db, DateTime now, int resetHours, CancellationToken ct = default)
+    {
+        var profile = await db.UserProfiles.AsNoTracking().FirstOrDefaultAsync(p => p.Id == 1, ct);
+        if (profile is not null && !IsResetDue(profile.UpdatedAt, now, resetHours)) return false;
+
+        await ResetAsync(db, now, ct);
+        return true;
+    }
+
+    public static bool IsResetDue(DateTime lastReset, DateTime now, int resetHours) =>
+        now - lastReset >= TimeSpan.FromHours(Math.Max(1, resetHours));
+
     /// <summary>Wipes all data and inserts fresh sample data. Dates are relative to now so the demo always looks current.</summary>
     public static async Task ResetAsync(AppDbContext db, DateTime now, CancellationToken ct = default)
     {

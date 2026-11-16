@@ -3,8 +3,8 @@
 // - Anywhere else (the published site on GitHub Pages) it talks to the live API.
 const LOCAL_API = 'http://localhost:8080/api';
 
-// After deploying the API to MonsterASP, put its address here (keep /api at the end).
-export const LIVE_API = 'https://REPLACE-WITH-YOUR-SITE.runasp.net/api';
+// The live API on Vercel (keep /api at the end).
+export const LIVE_API = 'https://ai-jobtracker-api.vercel.app/api';
 
 const isLocal = ['localhost', '127.0.0.1'].includes(location.hostname);
 
